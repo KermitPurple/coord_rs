@@ -1,5 +1,13 @@
-use num_traits::Num;
+//! A simple coordinate library to make manipulation of points easier
+
+use num::{Num, Float};
 use std::ops::*;
+
+pub fn distance<T: Float + Copy>(start: impl Into<Coord<T>>, end: impl Into<Coord<T>>) -> T {
+    let start = start.into();
+    let end = end.into();
+    ((end.x - start.x).powi(2) + (end.y - start.y).powi(2)).sqrt()
+}
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Coord<T: Num + Copy> {
@@ -10,6 +18,12 @@ pub struct Coord<T: Num + Copy> {
 impl<T: Num + Copy> Coord<T> {
     pub fn new(x: T, y: T) -> Self{
         Self{x, y}
+    }
+}
+
+impl<T: Float + Copy> Coord<T> {
+    pub fn distance<I: Into<Coord<T>>>(self, other: I) -> T{
+        distance(self, other)
     }
 }
 
@@ -130,6 +144,15 @@ impl<T: Num + Copy> From<&[T; 2]> for Coord<T> {
         Self {x, y}
     }
 }
+
+// impl<T: Num + Copy, J: Num + Copy> From<Coord<J>> for Coord<T> {
+//     fn from(coord: Coord<J>) -> Self {
+//         Self {
+//             x: coord.x as T,
+//             y: coord.y as T,
+//         }
+//     }
+// }
 
 impl<T: Num + Copy> TryFrom<Vec<T>> for Coord<T> {
     type Error = ();
@@ -268,6 +291,7 @@ mod tests {
         assert_eq!(Coord::new(0, 1), [0, 1].into());
         assert_eq!(Coord::new(0, 1), (0, 1).into());
         assert_eq!(Coord::new(0, 1), vec![0, 1].try_into().unwrap());
+        // assert_eq!(Coord::new(0i32, 1i32), Coord::new(0usize, 1usize).into());
         // operations
         let mut coord = Coord::new(0, 1);
         coord += (10, 9);
