@@ -268,5 +268,17 @@ mod tests {
         assert_eq!(Coord::new(0, 1), [0, 1].into());
         assert_eq!(Coord::new(0, 1), (0, 1).into());
         assert_eq!(Coord::new(0, 1), vec![0, 1].try_into().unwrap());
+        // operations
+        let mut coord = Coord::new(0, 1);
+        coord += (10, 9);
+        assert_eq!(coord, (10, 10).into());
+        coord -= 5;
+        assert_eq!(coord, (5, 5).into());
+        coord *= 10;
+        assert_eq!(coord, (50, 50).into());
+        coord /= 2;
+        assert_eq!(coord, (25, 25).into());
+        coord *= (-1, 2);
+        assert_eq!(coord, (-25, 50).into());
     }
 }
