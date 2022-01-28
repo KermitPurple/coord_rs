@@ -19,6 +19,13 @@ impl<T: Num + Copy> Coord<T> {
     pub fn new(x: T, y: T) -> Self{
         Self{x, y}
     }
+
+    pub fn into<J: Num + Copy + From<T>>(self) -> Coord<J> {
+        Coord {
+            x: self.x.into(),
+            y: self.y.into(),
+        }
+    }
 }
 
 impl<T: Float + Copy> Coord<T> {
@@ -298,7 +305,7 @@ mod tests {
         assert_eq!(Coord::new(0, 1), [0, 1].into());
         assert_eq!(Coord::new(0, 1), (0, 1).into());
         assert_eq!(Coord::new(0, 1), vec![0, 1].try_into().unwrap());
-        // assert_eq!(Coord::new(0i32, 1i32), Coord::new(0usize, 1usize).into());
+        assert_eq!(Coord::new(0f32, 1f32), Coord::new(0i16, 1i16).into());
         // operations
         let mut coord = Coord::new(0, 1);
         coord += (10, 9);
