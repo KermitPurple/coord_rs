@@ -98,16 +98,121 @@ impl<T: Num + Copy, I: Into<Coord<T>>> RemAssign<I> for Coord<T> {
     }
 }
 
+impl<T: Num + Copy> From<T> for Coord<T> {
+    fn from(val: T) -> Self {
+        Self {
+            x: val,
+            y: val,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*; // use the everything above this
 
     #[test]
     fn new() {
-        assert_eq!(Coord::new(5usize, 5), Coord{x: 5, y: 5});
-        assert_eq!(Coord::new(10, 12), Coord{x: 10, y: 12});
-        assert_eq!(Coord::new(12.5, 10.2), Coord{x: 12.5, y: 10.2});
-        assert_eq!(Coord::new(-10, 20), Coord{x: -10, y: 20});
-        assert_eq!(Coord::new(3u8, 100), Coord{x: 3, y: 100});
+        assert_eq!(Coord{x: 5, y: 5}, Coord::new(5usize, 5));
+        assert_eq!(Coord{x: 10, y: 12}, Coord::new(10, 12));
+        assert_eq!(Coord{x: 12.5, y: 10.2}, Coord::new(12.5, 10.2));
+        assert_eq!(Coord{x: -10, y: 20}, Coord::new(-10, 20));
+        assert_eq!(Coord{x: 3, y: 100}, Coord::new(3u8, 100));
+    }
+
+    #[test]
+    fn add() {
+        assert_eq!(Coord::new(9, 3) + Coord::new(1, 17), Coord::new(10usize, 20));
+        assert_eq!(Coord::new(9, -3) + Coord::new(-19, 23), Coord::new(-10, 20));
+        assert_eq!(Coord::new(10., 4.) + Coord::new(-3.5, -0.8), Coord::new(6.5, 3.2));
+        assert_eq!(Coord::new(20, 0) + Coord::new(0, 20), Coord::new(20, 20));
+    }
+
+    #[test]
+    fn add_assign() {
+        let mut coord = Coord::new(32, 10);
+        coord += Coord::new(-12, 10);
+        assert_eq!(coord, Coord::new(20, 20));
+        coord += Coord::new(5, 2);
+        assert_eq!(coord, Coord::new(25, 22));
+        coord += Coord::new(-50, -50);
+        assert_eq!(coord, Coord::new(-25, -28));
+        let mut coord = Coord::new(10usize, 3);
+        coord += Coord::new(1, 3);
+        assert_eq!(coord, Coord::new(11, 6));
+        let mut coord = Coord::new(10., 3.);
+        coord += Coord::new(0.5, 0.1);
+        assert_eq!(coord, Coord::new(10.5, 3.1));
+    }
+
+    #[test]
+    fn sub() {
+        assert_eq!(Coord::new(9, 17) - Coord::new(1, 17), Coord::new(8usize, 0));
+        assert_eq!(Coord::new(9, -3) + Coord::new(-19, 23), Coord::new(-10, 20));
+        assert_eq!(Coord::new(10., 4.) + Coord::new(-3.5, -0.8), Coord::new(6.5, 3.2));
+        assert_eq!(Coord::new(20, 0) + Coord::new(0, 20), Coord::new(20, 20));
+    }
+
+    #[test]
+    fn sub_assign() {
+        let mut coord = Coord::new(32, 10);
+        coord -= Coord::new(10, 20);
+        assert_eq!(coord, Coord::new(22, -10));
+        let mut coord = Coord::new(10usize, 5usize);
+        coord -= Coord::new(9, 5);
+        assert_eq!(coord, Coord::new(1, 0));
+    }
+
+    #[test]
+    fn mul() {
+        assert_eq!(Coord::new(5usize, 3) * Coord::new(2, 3), Coord::new(10, 9));
+        assert_eq!(Coord::new(10, -3) * Coord::new(-2, -3), Coord::new(-20, 9));
+    }
+
+    #[test]
+    fn mul_assign() {
+        let mut coord = Coord::new(2usize, 10);
+        coord *= Coord::new(5, 6);
+        assert_eq!(coord, Coord::new(10, 60));
+        let mut coord = Coord::new(-5, 32);
+        coord *= Coord::new(-5, 1);
+        assert_eq!(coord, Coord::new(25, 32));
+    }
+
+    #[test]
+    fn div() {
+        assert_eq!(Coord::new(5usize, 3) / Coord::new(2, 3), Coord::new(2, 1));
+        assert_eq!(Coord::new(10, -3) / Coord::new(-2, -3), Coord::new(-5, 1));
+    }
+
+    #[test]
+    fn div_assign() {
+        let mut coord = Coord::new(2usize, 10);
+        coord /= Coord::new(5, 6);
+        assert_eq!(coord, Coord::new(0, 1));
+        let mut coord = Coord::new(-5, 32);
+        coord /= Coord::new(-5, 1);
+        assert_eq!(coord, Coord::new(1, 32));
+    }
+
+    #[test]
+    fn rem() {
+        assert_eq!(Coord::new(5usize, 3) % Coord::new(2, 3), Coord::new(1, 0));
+        assert_eq!(Coord::new(10, -3) % Coord::new(-2, -3), Coord::new(0, 0));
+    }
+
+    #[test]
+    fn rem_assign() {
+        let mut coord = Coord::new(2usize, 10);
+        coord %= Coord::new(5, 6);
+        assert_eq!(coord, Coord::new(2, 4));
+        let mut coord = Coord::new(-5, 32);
+        coord %= Coord::new(-5, 1);
+        assert_eq!(coord, Coord::new(0, 0));
+    }
+
+    #[test]
+    fn from() {
+        assert_eq!(Coord::new(10, 10), 10.into());
     }
 }
