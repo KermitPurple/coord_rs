@@ -107,6 +107,44 @@ impl<T: Num + Copy> From<T> for Coord<T> {
     }
 }
 
+impl<T: Num + Copy> From<(T, T)> for Coord<T> {
+    fn from((x, y): (T, T)) -> Self {
+        Self {x, y}
+    }
+}
+
+impl<T: Num + Copy> From<&(T, T)> for Coord<T> {
+    fn from(&(x, y): &(T, T)) -> Self {
+        Self {x, y}
+    }
+}
+
+impl<T: Num + Copy> From<[T; 2]> for Coord<T> {
+    fn from([x, y]: [T; 2]) -> Self {
+        Self {x, y}
+    }
+}
+
+impl<T: Num + Copy> From<&[T; 2]> for Coord<T> {
+    fn from(&[x, y]: &[T; 2]) -> Self {
+        Self {x, y}
+    }
+}
+
+impl<T: Num + Copy> TryFrom<Vec<T>> for Coord<T> {
+    type Error = ();
+    fn try_from(v: Vec<T>) -> Result<Self, ()>{
+        if v.len() == 2 {
+            Ok(Self{
+                x: v[0],
+                y: v[1],
+            })
+        } else {
+            Err(())
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*; // use the everything above this
@@ -213,6 +251,22 @@ mod tests {
 
     #[test]
     fn from() {
-        assert_eq!(Coord::new(10, 10), 10.into());
+        // numbers
+        assert_eq!(Coord::new(0u8, 0), 0.into());
+        assert_eq!(Coord::new(0u16, 0), 0.into());
+        assert_eq!(Coord::new(0u32, 0), 0.into());
+        assert_eq!(Coord::new(0u64, 0), 0.into());
+        assert_eq!(Coord::new(0usize, 0), 0.into());
+        assert_eq!(Coord::new(0i8, 0), 0.into());
+        assert_eq!(Coord::new(0i16, 0), 0.into());
+        assert_eq!(Coord::new(0i32, 0), 0.into());
+        assert_eq!(Coord::new(0i64, 0), 0.into());
+        assert_eq!(Coord::new(0isize, 0), 0.into());
+        assert_eq!(Coord::new(0.0f32, 0.0), 0.0.into());
+        assert_eq!(Coord::new(0.0f64, 0.0), 0.0.into());
+        // objects
+        assert_eq!(Coord::new(0, 1), [0, 1].into());
+        assert_eq!(Coord::new(0, 1), (0, 1).into());
+        assert_eq!(Coord::new(0, 1), vec![0, 1].try_into().unwrap());
     }
 }
