@@ -182,6 +182,13 @@ mod tests {
     }
 
     #[test]
+    fn test_distance() {
+        let a = Coord::new(10f32, 20.);
+        let b = Coord::new(20f32, 30.);
+        assert_eq!(distance(a, b), a.distance(b));
+    }
+
+    #[test]
     fn add() {
         assert_eq!(Coord::new(9, 3) + Coord::new(1, 17), Coord::new(10usize, 20));
         assert_eq!(Coord::new(9, -3) + Coord::new(-19, 23), Coord::new(-10, 20));
