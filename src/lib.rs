@@ -3,10 +3,14 @@
 use num::{Num, Float};
 use std::ops::*;
 
-pub fn distance<T: Float + Copy>(start: impl Into<Coord<T>>, end: impl Into<Coord<T>>) -> T {
+pub fn distancef<T: Float + Copy>(start: impl Into<Coord<T>>, end: impl Into<Coord<T>>) -> T {
     let start = start.into();
     let end = end.into();
     ((end.x - start.x).powi(2) + (end.y - start.y).powi(2)).sqrt()
+}
+
+pub fn distance(start: Coord<f32>, end: Coord<f32>) -> f32 {
+    distancef(start, end)
 }
 
 #[derive(Copy, Clone, PartialEq, Debug)]
@@ -28,9 +32,15 @@ impl<T: Num + Copy> Coord<T> {
     }
 }
 
+impl<T: Num + Copy> Coord<T> where f32: From<T>{
+    pub fn distance(self, other: impl Into<Coord<f32>>) -> f32 {
+        distance(self.into(), other.into())
+    }
+}
+
 impl<T: Float + Copy> Coord<T> {
-    pub fn distance<I: Into<Coord<T>>>(self, other: I) -> T{
-        distance(self, other)
+    pub fn distancef<I: Into<Coord<T>>>(self, other: I) -> T{
+        distancef(self, other)
     }
 }
 
@@ -152,15 +162,6 @@ impl<T: Num + Copy> From<&[T; 2]> for Coord<T> {
     }
 }
 
-// impl<T: Num + Copy, J: Num + Copy> From<Coord<J>> for Coord<T> {
-//     fn from(coord: Coord<J>) -> Self {
-//         Self {
-//             x: coord.x as T,
-//             y: coord.y as T,
-//         }
-//     }
-// }
-
 impl<T: Num + Copy> TryFrom<Vec<T>> for Coord<T> {
     type Error = ();
     fn try_from(v: Vec<T>) -> Result<Self, ()>{
@@ -192,7 +193,10 @@ mod tests {
     fn test_distance() {
         let a = Coord::new(10f32, 20.);
         let b = Coord::new(20f32, 30.);
-        assert_eq!(distance(a, b), a.distance(b));
+        assert_eq!(distancef(a, b), a.distancef(b));
+        let a = Coord::new(10u16, 20);
+        let b = Coord::new(20u16, 30);
+        assert_eq!(distance(a.into(), b.into()), a.distance(b.into()));
     }
 
     #[test]
