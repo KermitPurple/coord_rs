@@ -9,7 +9,7 @@ pub fn distancef<T: Float + Copy>(start: impl Into<Coord<T>>, end: impl Into<Coo
     ((end.x - start.x).powi(2) + (end.y - start.y).powi(2)).sqrt()
 }
 
-pub fn distance(start: Coord<f32>, end: Coord<f32>) -> f32 {
+pub fn distance(start: impl Into<Coord<f32>>, end: impl Into<Coord<f32>>) -> f32 {
     distancef(start, end)
 }
 
