@@ -1,10 +1,7 @@
 //! A simple coordinate library to make manipulation of points easier
 
-use rand::{
-    prelude::*,
-    distributions::Standard,
-};
-use num::{Num, Float};
+use num::{Float, Num};
+use rand::{distributions::Standard, prelude::*};
 use std::ops::*;
 
 pub fn distancef<T: Float + Copy>(start: impl Into<Coord<T>>, end: impl Into<Coord<T>>) -> T {
@@ -24,8 +21,8 @@ pub struct Coord<T: Num + Copy> {
 }
 
 impl<T: Num + Copy> Coord<T> {
-    pub fn new(x: T, y: T) -> Self{
-        Self{x, y}
+    pub fn new(x: T, y: T) -> Self {
+        Self { x, y }
     }
 
     pub fn into<J: Num + Copy + From<T>>(self) -> Coord<J> {
@@ -36,14 +33,17 @@ impl<T: Num + Copy> Coord<T> {
     }
 }
 
-impl<T: Num + Copy> Coord<T> where f32: From<T>{
+impl<T: Num + Copy> Coord<T>
+where
+    f32: From<T>,
+{
     pub fn distance(self, other: impl Into<Coord<f32>>) -> f32 {
         distance(self.into(), other.into())
     }
 }
 
 impl<T: Float + Copy> Coord<T> {
-    pub fn distancef<I: Into<Coord<T>>>(self, other: I) -> T{
+    pub fn distancef<I: Into<Coord<T>>>(self, other: I) -> T {
         distancef(self, other)
     }
 }
@@ -135,54 +135,48 @@ impl<T: Num + Copy, I: Into<Coord<T>>> RemAssign<I> for Coord<T> {
 
 impl<T: Num + Copy> From<T> for Coord<T> {
     fn from(val: T) -> Self {
-        Self {
-            x: val,
-            y: val,
-        }
+        Self { x: val, y: val }
     }
 }
 
 impl<T: Num + Copy> From<(T, T)> for Coord<T> {
     fn from((x, y): (T, T)) -> Self {
-        Self {x, y}
+        Self { x, y }
     }
 }
 
 impl<T: Num + Copy> From<&(T, T)> for Coord<T> {
     fn from(&(x, y): &(T, T)) -> Self {
-        Self {x, y}
+        Self { x, y }
     }
 }
 
 impl<T: Num + Copy> From<[T; 2]> for Coord<T> {
     fn from([x, y]: [T; 2]) -> Self {
-        Self {x, y}
+        Self { x, y }
     }
 }
 
 impl<T: Num + Copy> From<&[T; 2]> for Coord<T> {
     fn from(&[x, y]: &[T; 2]) -> Self {
-        Self {x, y}
+        Self { x, y }
     }
 }
 
 impl<T: Num + Copy> TryFrom<Vec<T>> for Coord<T> {
     type Error = ();
-    fn try_from(v: Vec<T>) -> Result<Self, ()>{
+    fn try_from(v: Vec<T>) -> Result<Self, ()> {
         if v.len() == 2 {
-            Ok(Self{
-                x: v[0],
-                y: v[1],
-            })
+            Ok(Self { x: v[0], y: v[1] })
         } else {
             Err(())
         }
     }
 }
 
-impl<T: Num + Copy> Distribution<Coord<T>> for Standard 
-    where 
-        Standard: Distribution<T>
+impl<T: Num + Copy> Distribution<Coord<T>> for Standard
+where
+    Standard: Distribution<T>,
 {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Coord<T> {
         Coord::new(rng.gen(), rng.gen())
@@ -195,11 +189,11 @@ mod tests {
 
     #[test]
     fn new() {
-        assert_eq!(Coord{x: 5, y: 5}, Coord::new(5usize, 5));
-        assert_eq!(Coord{x: 10, y: 12}, Coord::new(10, 12));
-        assert_eq!(Coord{x: 12.5, y: 10.2}, Coord::new(12.5, 10.2));
-        assert_eq!(Coord{x: -10, y: 20}, Coord::new(-10, 20));
-        assert_eq!(Coord{x: 3, y: 100}, Coord::new(3u8, 100));
+        assert_eq!(Coord { x: 5, y: 5 }, Coord::new(5usize, 5));
+        assert_eq!(Coord { x: 10, y: 12 }, Coord::new(10, 12));
+        assert_eq!(Coord { x: 12.5, y: 10.2 }, Coord::new(12.5, 10.2));
+        assert_eq!(Coord { x: -10, y: 20 }, Coord::new(-10, 20));
+        assert_eq!(Coord { x: 3, y: 100 }, Coord::new(3u8, 100));
     }
 
     #[test]
@@ -214,9 +208,15 @@ mod tests {
 
     #[test]
     fn add() {
-        assert_eq!(Coord::new(9, 3) + Coord::new(1, 17), Coord::new(10usize, 20));
+        assert_eq!(
+            Coord::new(9, 3) + Coord::new(1, 17),
+            Coord::new(10usize, 20)
+        );
         assert_eq!(Coord::new(9, -3) + Coord::new(-19, 23), Coord::new(-10, 20));
-        assert_eq!(Coord::new(10., 4.) + Coord::new(-3.5, -0.8), Coord::new(6.5, 3.2));
+        assert_eq!(
+            Coord::new(10., 4.) + Coord::new(-3.5, -0.8),
+            Coord::new(6.5, 3.2)
+        );
         assert_eq!(Coord::new(20, 0) + Coord::new(0, 20), Coord::new(20, 20));
     }
 
@@ -241,7 +241,10 @@ mod tests {
     fn sub() {
         assert_eq!(Coord::new(9, 17) - Coord::new(1, 17), Coord::new(8usize, 0));
         assert_eq!(Coord::new(9, -3) + Coord::new(-19, 23), Coord::new(-10, 20));
-        assert_eq!(Coord::new(10., 4.) + Coord::new(-3.5, -0.8), Coord::new(6.5, 3.2));
+        assert_eq!(
+            Coord::new(10., 4.) + Coord::new(-3.5, -0.8),
+            Coord::new(6.5, 3.2)
+        );
         assert_eq!(Coord::new(20, 0) + Coord::new(0, 20), Coord::new(20, 20));
     }
 
