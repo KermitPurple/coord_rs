@@ -1,5 +1,9 @@
 //! A simple coordinate library to make manipulation of points easier
 
+use rand::{
+    prelude::*,
+    distributions::Standard,
+};
 use num::{Num, Float};
 use std::ops::*;
 
@@ -173,6 +177,15 @@ impl<T: Num + Copy> TryFrom<Vec<T>> for Coord<T> {
         } else {
             Err(())
         }
+    }
+}
+
+impl<T: Num + Copy> Distribution<Coord<T>> for Standard 
+    where 
+        Standard: Distribution<T>
+{
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Coord<T> {
+        Coord::new(rng.gen(), rng.gen())
     }
 }
 
